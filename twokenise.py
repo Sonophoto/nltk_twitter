@@ -110,19 +110,22 @@ def align(toks, orig):
     alignments = [None]*len(toks)
     for tok_i in range(len(toks)):
         while True:
-            L = len(toks[tok_i])
-            if orig[s_i:(s_i+L)] == toks[tok_i]:
+            length = len(toks[tok_i])
+            if orig[s_i:(s_i+length)] == toks[tok_i]:
                 alignments[tok_i] = s_i
-                s_i += L
+                s_i += length
                 break
             s_i += 1
-            if s_i >= len(orig): raise AlignmentFailed((orig,toks,alignments))
+            if s_i >= len(orig): 
+                raise AlignmentFailed((orig, toks, alignments))
             #if orig[s_i] != ' ': raise AlignmentFailed("nonspace advance: %s" % ((s_i,orig),))
-    if any(a is None for a in alignments): raise AlignmentFailed((orig,toks,alignments))
+    if any(a is None for a in alignments): 
+        raise AlignmentFailed((orig, toks, alignments))
 
     return alignments
 
-class AlignmentFailed(Exception): pass
+class AlignmentFailed(Exception): 
+    pass
 
 def unicodify(s, encoding='utf8', *args):
     #if isinstance(s,str): return s
@@ -131,7 +134,7 @@ def unicodify(s, encoding='utf8', *args):
 
 def tokenize(tweet):
     #text = unicodify(tweet)
-    text = squeeze_whitespace(text)
+    text = squeeze_whitespace(tweet)
     t = Tokenization()
     t += simple_tokenize(text)
     t.text = text
@@ -149,10 +152,10 @@ def simple_tokenize(text):
     i = 0
     if Protect_RE.search(s):
         for m in Protect_RE.finditer(s):
-            goods.append( (i,m.start()) )
+            goods.append( (i, m.start()) )
             bads.append(m.span())
             i = m.end()
-        goods.append( (m.end(), len(s)) )
+            goods.append( (m.end(), len(s)) )
     else:
         goods = [ (0, len(s)) ]
     assert len(bads)+1 == len(goods)
@@ -210,8 +213,8 @@ def unprotected_tokenize(s):
 
 
 if __name__=='__main__':
-
-    print(" ".join(tokenize("@OKFNau What's the best email to contact you guys with?")))
+    for line in open('tweets.txt'):
+        print(" ".join(tokenize(line[:-1])))
     #for line in sys.stdin:
         #print u" ".join(tokenize(line[:-1])).encode('utf-8')
         #print "CUR\t" + " ".join(tokenize(line[:-1]))
