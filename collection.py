@@ -1,7 +1,7 @@
 import os
 import json
 
-from twython import Twython, TwythonStreamer
+from twython import Twython
 from util import credentials
 
 class Twitter:
@@ -24,14 +24,15 @@ class Twitter:
             
     def tweet_text(self, fn=FILE):
         
-        infile = open(fn)
-        jsono = json.load(infile)
+        with open(fn) as infile:
+            jsono = json.load(infile)
+            
         text = (st['text'] for st in jsono['statuses'] if ['text'] in st)
         
         outfn = os.path.splitext(fn)[0] + '.txt'
-        outfile = open(outfn, 'w')
-        for t in text: print(t, file=outfile)
-        outfile.close()
+        with open(outfn, 'w') as outfile:
+            for t in text: 
+                print(t, file=outfile)
 
 tw = Twitter()   
 jsono = tw.tweet_text()
