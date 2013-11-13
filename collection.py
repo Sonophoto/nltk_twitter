@@ -12,29 +12,36 @@ class Twitter:
         creds = credentials(cred_fn=cred_fn)
         self.twitter = Twython(*creds)
 
-    def capture(self, fn=FILE, output=False):
-        tweets = self.twitter.search(q='@OKFNAu')
-        outfile = open(fn, 'w')       
+    def capture(self, outfn=FILE, output=False):
+        tweets = self.twitter.search(q='@GreenYes2014')
+        outfile = open(outfn, 'w')
         
         if output:
             print(json.dumps(tweets, sort_keys=True, indent=4, separators=(',', ': ')))
         else:
             json.dump(tweets, outfile)
+            print('Capturing tweets in %s' % outfn)
                        
             
-    def tweet_text(self, fn=FILE):
+    def tweet_text(self, fn=FILE, dumptofile=True):
         
         with open(fn) as infile:
             jsono = json.load(infile)
             
-        text = (st['text'] for st in jsono['statuses'] if ['text'] in st)
+        text = (st['text'] for st in jsono['statuses'])
         
-        outfn = os.path.splitext(fn)[0] + '.txt'
-        with open(outfn, 'w') as outfile:
+        if not dumptofile:
             for t in text: 
-                print(t, file=outfile)
+                print(t)
+        else:
+            outfn = os.path.splitext(fn)[0] + '.txt'
+            print('Writing to %s' % outfn)
+            with open(outfn, 'w') as outfile:
+                for t in text:
+                    print(t, file=outfile)
 
-tw = Twitter()   
-jsono = tw.tweet_text()
 
-    
+tw = Twitter()
+tw.authenticate('creds.json')
+tw.capture()
+tw.tweet_text(dumptofile=False)
