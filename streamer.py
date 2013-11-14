@@ -16,33 +16,14 @@ class Streamer(TwythonStreamer):
         self.delout  = open('delete.txt', 'a')
         super().__init__(app_key, app_secret, oauth_token, oauth_token_secret)
         
-    #def on_success(self, data):
-        #if 'text' in data:
-            #print(data['text'])
 
-    #def on_success(self, data):
-        #count = 0
-        #filename = 'collection'
-        #output = open(filename + '.json', 'w')
-
-        #while count < 100:
-            #if 'delete' in data:
-                #print(data)
-            #else:
-                #status = json.dumps(data, indent=4) + '\n'
-                #print(count)
-                #output.write(status)
-                #count += 1
-
-        #self.disconnect()
-        #output.close()
         
     def on_success(self, data):
-        #json_data = json.loads(data)
+        """Check properties of tweet to decide how to proceed.
+        """
         
         if  'text' in data:
-            self.on_status(data)
-            
+            self.on_status(data)           
         elif 'delete' in data:
             delete = data['delete']['status']
             if self.on_delete(delete['id'], delete['user_id']) is False:

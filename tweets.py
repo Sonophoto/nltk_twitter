@@ -57,11 +57,7 @@ class TweetCorpusReader(CorpusReader):
         CorpusReader.__init__(self, root, tweetids, encoding)
         self._word_tokenizer = word_tokenizer
         self._sent_tokenizer = sent_tokenizer
- 
 
-    def open(self, f):
-        fp = open(f)
-        json.load(fp)
         
     def raw(self, tweetids=None):
         """
@@ -71,7 +67,9 @@ class TweetCorpusReader(CorpusReader):
         #if tweetids is None: tweetids = self._tweetids
         #elif isinstance(tweetids, compat.string_types): tweetids = [tweetids]
         #return concat([self.open(f).read() for f in tweetids])
-        return self.open('collection.json')
+        for line in open('collection.json'):
+            tweet = json.loads(line)
+            print(tweet['id'], tweet['text'])
 
     def words(self, tweetids=None):
         """
