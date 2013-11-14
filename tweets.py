@@ -67,9 +67,21 @@ class TweetCorpusReader(CorpusReader):
         #if tweetids is None: tweetids = self._tweetids
         #elif isinstance(tweetids, compat.string_types): tweetids = [tweetids]
         #return concat([self.open(f).read() for f in tweetids])
-        for line in open('collection.json'):
-            tweet = json.loads(line)
-            print(tweet['id'], tweet['text'])
+        
+        tweets = [json.loads(line) for line in open('collection.json')]
+        return [json.dumps(tweet, indent=4, sort_keys=True) for tweet in tweets]
+            
+    def text(self, tweetids=None):
+        """
+        :return: the given file(s) as a single string.
+        :rtype: str
+        """
+        #if tweetids is None: tweetids = self._tweetids
+        #elif isinstance(tweetids, compat.string_types): tweetids = [tweetids]
+        #return concat([self.open(f).read() for f in tweetids])
+        tweets = [json.loads(line) for line in  open('collection.json')]
+       
+        return [tweet['text'] for tweet in tweets]
 
     def words(self, tweetids=None):
         """
@@ -133,4 +145,8 @@ class TweetCorpusReader(CorpusReader):
     
 if __name__ == '__main__':
     tr = TweetCorpusReader()
-    tr.raw()
+    for t in tr.raw(): 
+        print(t) 
+    print()
+    for t in tr.text():
+        print(t)
